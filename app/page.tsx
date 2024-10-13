@@ -7,11 +7,12 @@ import Head from 'next/head';
 export default function Home() {
   return (
     <section className='pb-24 pt-40'>
-      <div className='container max-w-3xl'>
-        <Head>
+      <Head>
           <title>Abishek Selvan</title>
           <meta name="home page" content="This is the home page of your site" />
         </Head>
+        
+      <div className='container max-w-3xl'>
 
         <Intro />
 
