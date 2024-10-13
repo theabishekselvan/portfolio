@@ -18,22 +18,24 @@ export async function sendEmail(data: ContactFormInputs) {
 
   try {
     const { name, email, message } = result.data
-    const { data, error } = await resend.emails.send({
-      from: 'delivered@resend.dev',
-      to: [email],
-      cc: ['delivered@resend.dev'],
+    const { data: resendData, error: resendError } = await resend.emails.send({
+      from: 'onboarding@resend.dev',  // Use this for testing
+      to: ['delivered@resend.dev'],
+      cc: ['onboarding@resend.dev'],
       subject: 'Contact form submission',
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
       react: ContactFormEmail({ name, email, message })
     })
 
-    if (!data || error) {
-      throw new Error('Failed to send email')
+    if (!resendData || resendError) {
+      console.error('Resend error:', resendError);
+      return { error: `Failed to send email: ${resendError?.message || 'Unknown error'}` }
     }
 
     return { success: true }
   } catch (error) {
-    return { error }
+    console.error('Caught error:', error);
+    return { error: `An error occurred: ${error instanceof Error ? error.message : String(error)}` }
   }
 }
 
@@ -46,19 +48,21 @@ export async function subscribe(data: NewsletterFormInputs) {
 
   try {
     const { email } = result.data
-    const { data, error } = await resend.contacts.create({
+    const { data: resendData, error: resendError } = await resend.contacts.create({
       email: email,
       audienceId: process.env.RESEND_AUDIENCE_ID as string
     })
 
-    if (!data || error) {
-      throw new Error('Failed to subscribe')
+    if (!resendData || resendError) {
+      console.error('Resend error:', resendError);
+      return { error: `Failed to subscribe: ${resendError?.message || 'Unknown error'}` }
     }
 
     // TODO: Send a welcome email
 
     return { success: true }
   } catch (error) {
-    return { error }
+    console.error('Caught error:', error);
+    return { error: `An error occurred: ${error instanceof Error ? error.message : String(error)}` }
   }
 }
